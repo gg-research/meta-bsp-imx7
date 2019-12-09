@@ -1,0 +1,12 @@
+MACHINE=${MACHINE:-cl-som-imx7}
+DISTRO=${DISTRO:-fsl-imx-xwayland}
+EULA=1
+
+. fsl-setup-release.sh $@
+
+declare -a ENVIRONMENT=('../sources/meta-bsp-imx7/tools/setup-compulab-env \
+			../sources/meta-bsp-imx7/tools/setup-user-env')
+
+for env in ${ENVIRONMENT[@]};do
+[ -f ${env} ] && FORCE=Yes source ${env}
+done

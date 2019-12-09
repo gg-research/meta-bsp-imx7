@@ -1,0 +1,73 @@
+From adde001830a72c3776b2e59e7a5642bf75c4a242 Mon Sep 17 00:00:00 2001
+From: Ilya Ledvich <ilya@compulab.co.il>
+Date: Sun, 24 Apr 2016 17:20:18 +0300
+Subject: [PATCH 26/37] PCIe: imx6: imx7d: add support for phy refclk source
+ configuration
+
+i.MX7D variant of the IP can use either Crystal Oscillator input
+or internal clock input as a Reference Clock input for PCIe PHY.
+Add support for an optional property 'fsl,pcie-phy-refclk-internal'.
+If present then an internal clock input is used as PCIe PHY
+reference clock source. By default an external ocsillator input
+is still used.
+
+Verified on Compulab SBC-iMX7 Single Board Computer.
+
+Signed-off-by: Ilya Ledvich <ilya@compulab.co.il>
+---
+ Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt | 5 +++++
+ drivers/pci/dwc/pci-imx6.c                               | 8 +++++++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
+index 45deda18524e..fb17dbaf6e29 100644
+--- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
+@@ -56,6 +56,11 @@ Additional required properties for imx7d-pcie:
+ 	       - "pciephy"
+ 	       - "apps"
+ 
++Additional optional properties for imx7d-pcie:
++- fsl,pcie-phy-refclk-internal: If present then an internal PLL input is used
++  as PCIe PHY reference clock source. By default an external ocsillator input
++  is used.
++
+ Additional required properties for imx8 pcie:
+ - hsio : should be <&hsio>.
+    The phandle points to the hsio region containing the hsio
+diff --git a/drivers/pci/dwc/pci-imx6.c b/drivers/pci/dwc/pci-imx6.c
+index 54459b52f526..abc39ecd1e2e 100644
+--- a/drivers/pci/dwc/pci-imx6.c
++++ b/drivers/pci/dwc/pci-imx6.c
+@@ -98,6 +98,7 @@ struct imx_pcie {
+ 	struct regulator	*pcie_phy_regulator;
+ 	struct regulator	*pcie_bus_regulator;
+ 	struct regulator	*epdev_on;
++	bool			pcie_phy_refclk_sel;
+ };
+ 
+ /* Parameters for the waiting for PCIe PHY PLL to lock on i.MX7 */
+@@ -1304,7 +1305,8 @@ static void imx_pcie_init_phy(struct imx_pcie *imx_pcie)
+ 
+ 		/* pcie phy ref clock select; 1? internal pll : external osc */
+ 		regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR12,
+-				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL, 0);
++				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL,
++				   imx_pcie->pcie_phy_refclk_sel ? IMX7D_GPR12_PCIE_PHY_REFCLK_SEL : 0);
+ 	} else if (imx_pcie->variant == IMX6SX) {
+ 		/* Force PCIe PHY reset */
+ 		regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR5,
+@@ -2554,6 +2556,10 @@ static int imx_pcie_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		imx_pcie->link_gen = 1;
+ 
++	/* PCI PHY reference clock source select */
++	imx_pcie->pcie_phy_refclk_sel =
++		of_property_read_bool(node, "fsl,pcie-phy-refclk-internal");
++
+ 	imx_pcie->vpcie = devm_regulator_get_optional(&pdev->dev, "vpcie");
+ 	if (IS_ERR(imx_pcie->vpcie)) {
+ 		if (PTR_ERR(imx_pcie->vpcie) == -EPROBE_DEFER)
+-- 
+2.20.1
+

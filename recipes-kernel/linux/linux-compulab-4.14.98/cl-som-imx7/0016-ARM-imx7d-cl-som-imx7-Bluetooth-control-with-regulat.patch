@@ -1,0 +1,52 @@
+From e849dfcc170d410386519007a8546668b40563ab Mon Sep 17 00:00:00 2001
+From: Uri Mashiach <uri.mashiach@compulab.co.il>
+Date: Tue, 7 Aug 2018 10:33:09 +0300
+Subject: [PATCH 16/37] ARM: imx7d: cl-som-imx7: Bluetooth control with
+ regulator
+
+Use the user space regulator to enable/disable the Bluetooth.
+
+Signed-off-by: Uri Mashiach <uri.mashiach@compulab.co.il>
+---
+ arch/arm/boot/dts/imx7d-cl-som-imx7.dts | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
+index 0a40ed51b6bb..a0a6f394983f 100644
+--- a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
++++ b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
+@@ -54,6 +54,16 @@
+ 		startup-delay-us = <70000>;
+ 		enable-active-high;
+ 	};
++
++	bt_en_reg: fixedregulator-bt_en {
++		compatible = "regulator-fixed";
++		regulator-name = "bt_en_fixed";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&pca9555 1 GPIO_ACTIVE_HIGH>;
++		startup-delay-us = <1000>;
++		enable-active-high;
++	};
+ 	/* Regulators - end */
+ 
+ 	leds {
+@@ -65,6 +75,14 @@
+ 			linux,default-trigger = "heartbeat";
+ 		};
+ 	};
++
++	bt_enable: bt_enable@0 {
++		compatible = "userspace-consumer-wrapper";
++		comment = "Enable/disbale bluetooth regulator bt_en_reg";
++
++		regulator-name = "bt_en_fixed";
++		us-folder-num = <0>;
++	};
+ };
+ 
+ &cpu0 {
+-- 
+2.20.1
+

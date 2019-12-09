@@ -1,0 +1,69 @@
+From edf59240fcf2dde2849bbee1d968ed2ac9832549 Mon Sep 17 00:00:00 2001
+From: Ilya Ledvich <ilya@compulab.co.il>
+Date: Sun, 17 Apr 2016 14:26:48 +0300
+Subject: [PATCH 24/37] ARM: dts: imx7d: sbc-imx7: add DVI support
+
+Signed-off-by: Ilya Ledvich <ilya@compulab.co.il>
+---
+ arch/arm/boot/dts/imx7d-sbc-imx7.dts | 31 ++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+diff --git a/arch/arm/boot/dts/imx7d-sbc-imx7.dts b/arch/arm/boot/dts/imx7d-sbc-imx7.dts
+index e1714c28ff37..453a18d865da 100644
+--- a/arch/arm/boot/dts/imx7d-sbc-imx7.dts
++++ b/arch/arm/boot/dts/imx7d-sbc-imx7.dts
+@@ -41,6 +41,13 @@
+ 		#gpio-cells = <2>;
+ 		reg = <0x20>;
+ 
++		/* DVI ENABLE GPIO */
++		dvi_en_3v3 {
++			gpio-hog;
++			gpios = <13 GPIO_ACTIVE_HIGH>;
++			output-high;
++			line-name = "dvi_en_3v3";
++		};
+ 		/* LCD nSTANDBY GPIO */
+ 		lcd_nstby_3v3 {
+ 			gpio-hog;
+@@ -55,6 +62,12 @@
+ 		reg = <0x54>;
+ 		pagesize = <16>;
+ 	};
++
++	dvicape@39 {
++		compatible = "sil164";
++		reg = <0x39>;
++	};
++
+ };
+ 
+ &lcdif {
+@@ -86,6 +99,24 @@
+ 				de-active = <1>;
+ 				pixelclk-active = <0>;
+ 			};
++
++			timing1: dvi {
++				/* 1024x768p60 */
++				clock-frequency = <65000000>;
++				hactive = <1024>;
++				vactive = <768>;
++				hback-porch = <220>;
++				hfront-porch = <40>;
++				vback-porch = <21>;
++				vfront-porch = <7>;
++				hsync-len = <60>;
++				vsync-len = <10>;
++
++				hsync-active = <0>;
++				vsync-active = <0>;
++				de-active = <1>;
++				pixelclk-active = <0>;
++			};
+ 		};
+ 	};
+ };
+-- 
+2.20.1
+
