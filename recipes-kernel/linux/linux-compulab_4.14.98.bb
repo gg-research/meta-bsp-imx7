@@ -17,8 +17,8 @@ do_copy_defconfig () {
     echo ${B}
     install -d ${B}
     mkdir -p ${B}
-    cp ${S}/arch/arm/configs/compulab_imx7_defconfig ${B}/.config
-    cp ${S}/arch/arm/configs/compulab_imx7_defconfig ${B}/../defconfig
+#    cp ${S}/arch/arm/configs/compulab_imx7_defconfig ${B}/.config
+#    cp ${S}/arch/arm/configs/compulab_imx7_defconfig ${B}/../defconfig
 }
 
 COMPATIBLE_MACHINE = "cl-som-imx7"
