@@ -13,12 +13,16 @@ include linux-compulab-4.14.98/linux-compulab_cl-som-imx7.inc
 
 addtask copy_defconfig after do_unpack before do_preconfigure
 do_copy_defconfig () {
+# /home/ubuntu/sp-gateway/build-xwayland-imx7/tmp/work/cl_som_imx7-poky-linux-gnueabi/linux-compulab/4.14.98-r0/git/home/ubuntu/sp-gateway/build-xwayland-imx7/tmp/work/cl_som_imx7-poky-linux-gnueabilinux-compulab/4.14.98-r/git
+##
     echo ${S}
-    echo ${B}
+# /home/ubuntu/sp-gateway/build-xwayland-imx7/tmp/work/cl_som_imx7-poky-linux-gnueabi/linux-compulab/4.14.98-r0/build/home/ubuntu/sp-gateway/build-xwayland-imx7/tmp/work/cl_som_imx7-poky-linux-gnueabi/linux-compulab/4.14.98-r0/build
+##
+	echo ${B}
     install -d ${B}
     mkdir -p ${B}
-#    cp ${S}/arch/arm/configs/compulab_imx7_defconfig ${B}/.config
-#    cp ${S}/arch/arm/configs/compulab_imx7_defconfig ${B}/../defconfig
+    cp ${S}/arch/arm/configs/compulab_imx7_defconfig ${B}/.config
+    cp ${S}/arch/arm/configs/compulab_imx7_defconfig ${B}/../defconfig
 }
 
 COMPATIBLE_MACHINE = "cl-som-imx7"
